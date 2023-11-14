@@ -1,5 +1,14 @@
 # UOCIS322 - Project 5 #
-Brevet time calculator with MongoDB!
+
+
+Author : Adrian Martushev
+Email : amartush@uoregon.edu
+
+
+This is continuation of project 4, a brevet time calculator. We now implement MongoDB and add some additional front end buttons "Submit" and "Display." Submit stores the data and upon confirmation clears the form. Display populates the currently stored data back into the form.
+
+
+_________________________________
 
 ## Overview
 

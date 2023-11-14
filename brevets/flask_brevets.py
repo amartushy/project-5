@@ -55,7 +55,7 @@ def submit():
         for item in data:
             mongo.db.control_times.insert_one(item)
     except Exception as e:
-        app.logger.error(f"Error inserting data into MongoDB: {e}")
+        app.logger.error(f"Error inserting data: {e}")
         return flask.jsonify({"error": str(e)}), 500
     return flask.jsonify({"message": "Data submitted successfully"}), 200
 
@@ -64,17 +64,12 @@ def submit():
 @app.route('/display', methods=['GET'])
 def display():
     try:
-        # Retrieve all documents from the collection
         data_cursor = mongo.db.control_times.find({}, {'_id': 0})
-
-        # Convert cursor to a list of dictionaries
         data_list = list(data_cursor)
-
-        # Return the data as JSON
         return flask.jsonify(data_list)
 
     except Exception as e:
-        app.logger.error(f"Error retrieving data from MongoDB: {e}")
+        app.logger.error(f"Error retrieving data: {e}")
         return flask.jsonify({"error": str(e)}), 500
 
     
