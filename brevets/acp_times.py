@@ -6,13 +6,14 @@ and https://rusa.org/pages/rulesForRiders
 """
 
 
-
 import arrow
+import math
 
-    
+
 # Constants for the minimum and maximum speeds in km/hr
 MIN_SPEEDS = {0: 15, 200: 15, 400: 15, 600: 11.428, 1000: 13.333}
-MAX_SPEEDS = {200: 34, 300: 32, 400: 30, 600: 28, 1000: 26}
+MAX_SPEEDS = {0: 34, 200: 32, 400: 30, 600: 28, 1000: 26}
+MAX_BREVET_TIMES = {200: 13.5, 300: 20, 400: 27, 600: 40, 1000: 75}
 
 
 def get_speed(control_dist_km, brevet_dist_km, speed_dict):
@@ -26,19 +27,19 @@ def get_speed(control_dist_km, brevet_dist_km, speed_dict):
             applicable_speed = speed_dict[distance]
             break
     return applicable_speed
-    
+
 
 def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     """
     Calculate the open time for a control point.
-    
+
     Args:
         control_dist_km:  number, control distance in kilometers
         brevet_dist_km: number, nominal distance of the brevet
             in kilometers, which must be one of 200, 300, 400, 600,
             or 1000 (the only official ACP brevet distances)
         brevet_start_time:  An arrow object
-        
+
     Returns:
         An arrow object indicating the control open time.
         This will be in the same time zone as the brevet start time.
@@ -63,12 +64,13 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
         total_time += excess_dist / MIN_SPEEDS[brevet_dist_km]
 
     hours = int(total_time)
-    minutes = int((total_time - hours) * 60) 
+    minutes = round((total_time - hours) * 60)
 
     open_time = brevet_start_time.shift(hours=hours, minutes=minutes)
-    
+
     return open_time
-    
+
+
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -87,6 +89,8 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        This will be in the same time zone as the brevet start time.
     """
     
+    original_control_dist_km = control_dist_km  # Store the original control distance
+
     if control_dist_km == 0:
         return brevet_start_time.shift(hours=+1)
 
@@ -103,10 +107,14 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
     if control_dist_km <= 60:
         total_time = max(total_time, control_dist_km / MIN_SPEEDS[0])
 
+    if original_control_dist_km >= brevet_dist_km:
+        total_time = MAX_BREVET_TIMES[brevet_dist_km]
+        
+        
     hours = int(total_time)
-    minutes = (total_time - hours) * 60
-    minutes = int(minutes)
-
+    minutes = round((total_time - hours) * 60)
+    
+    
     close_time = brevet_start_time.shift(hours=hours, minutes=minutes)
     
     return close_time

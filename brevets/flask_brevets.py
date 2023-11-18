@@ -42,18 +42,24 @@ def page_not_found(error):
 
 
 #Project 5 Event Handlers
-
 @app.route('/submit', methods=['POST'])
 def submit():
     data = request.json
+    
+    #Data verification checks
     if not isinstance(data, list):
         app.logger.error("Received data is not a list")
         return flask.jsonify({"error": "Invalid data format"}), 400
     if mongo.db is None:
         return flask.jsonify({"error": "Database not initialized"}), 500
     try:
-        for item in data:
-            mongo.db.control_times.insert_one(item)
+        
+        # Clear existing data in the collection
+        mongo.db.control_times.delete_many({})
+
+        # Insert new data
+        mongo.db.control_times.insert_many(data)
+            
     except Exception as e:
         app.logger.error(f"Error inserting data: {e}")
         return flask.jsonify({"error": str(e)}), 500

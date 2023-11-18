@@ -32,14 +32,14 @@ def test_open_200():
     start_time = arrow.get('2021-01-01T00:00:00+00:00')
     control_dist_km = 200
     brevet_dist_km = 200
-    expected_open_time = start_time.shift(hours=+5, minutes=+52)
+    expected_open_time = start_time.shift(hours=+5, minutes=+53)
     assert_equal(open_time(control_dist_km, brevet_dist_km, start_time), expected_open_time)
 
 def test_close_200():
     start_time = arrow.get('2021-01-01T00:00:00+00:00')
     control_dist_km = 200
     brevet_dist_km = 200
-    expected_close_time = start_time.shift(hours=+13, minutes=+20)
+    expected_close_time = start_time.shift(hours=+13, minutes=+30)
     assert_equal(close_time(control_dist_km, brevet_dist_km, start_time), expected_close_time)
 
 def test_close_60():

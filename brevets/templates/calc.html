@@ -120,10 +120,11 @@
             </div>
          </div>
 
-         <!-- JavaScript for Button Functionality -->
+         <!-- JavaScript for Submit and Display Functionality -->
          <script>
             $(document).ready(function() {
-               // Project 5 submit button functionality
+                
+                // Javascript for Submit
                $('#submit_button').click(function() {
                    var controlData = [];
 
@@ -147,8 +148,9 @@
                        contentType: 'application/json',
                        data: JSON.stringify(controlData),
                        success: function(response) {
-                           alert("Data submitted successfully");
                            // Clear the form fields after successful submission
+                           console.log("data stored successfully")
+                           
                            $(".control").each(function() {
                                $(this).find("input[type='number'], input[type='text'], input[type='datetime-local']").val('');
                                $(this).find(".notes").text('');
@@ -156,25 +158,23 @@
                        },
                        error: function(error) {
                            console.log(error);
-                           alert("An error occurred");
                        }
                    });
                });
-
-               
                
                
 
-               // Project 5 display button functionality
+               // Javascript for Display
                $('#display_button').click(function() {
                    $.ajax({
                        url: SCRIPT_ROOT + '/display',
                        type: 'GET',
                        success: function(data) {
+                           console.log(data)
+
                            // Clear existing rows before populating new data
                            $(".control input").val('');
                            
-                           // Assuming 'data' is an array of control points
                            data.forEach(function(controlData, index) {
                                if (index < $(".control").length) {
                                    var controlRow = $(".control").eq(index);
@@ -183,33 +183,23 @@
                                    controlRow.find("input[name='location']").val(controlData.location);
                                    controlRow.find("input[name='open']").val(controlData.open);
                                    controlRow.find("input[name='close']").val(controlData.close);
-                                   controlRow.find(".notes").text(controlData.notes); // Adjust based on your HTML
+                                   controlRow.find(".notes").text(controlData.notes);
                                }
                            });
                        },
                        error: function(error) {
                            console.log(error);
-                           alert("An error occurred while fetching data");
                        }
                    });
                });
-
-
-               
-               
             });
+             
          </script>
          
          
          <script type="text/javascript">
             var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
             var TIME_CALC_URL = SCRIPT_ROOT + "/_calc_times";
-
-            // FIX ME!
-            // Right now, only the kilometers are passed
-            // you need to pass much more!
-            // View flask_brevets.py for details.
-
              
              function calc_times(control) {
                var km = control.find("input[name='km']").val();
@@ -236,8 +226,6 @@
 
 
             $(document).ready(function(){
-             // Do the following when the page is finished loading
-
                 $('input[name="miles"]').change(
                    function() {
                        var miles = parseFloat($(this).val());
